@@ -1,11 +1,14 @@
 package com.example.myapplication
 
+import android.content.res.Configuration.UI_MODE_NIGHT_YES
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.core.Spring
 import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.animation.core.spring
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -14,15 +17,17 @@ import androidx.compose.runtime.*
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.example.myapplication.ui.theme.MyApplicationTheme
+import com.example.myapplication.ui.theme.BasicsCodelabTheme
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
-            MyApplicationTheme {
+            BasicsCodelabTheme {
                 MyApp()
             }
         }
@@ -59,9 +64,13 @@ private fun Greeting(name: String) {
             stiffness = Spring.StiffnessLow
         )
     )
+    val color by animateColorAsState(
+        targetValue = if (expanded.value) MaterialTheme.colors.secondary else MaterialTheme.colors.primary,
+        animationSpec = tween(durationMillis = 250)
+    )
 
     Surface(
-        color = MaterialTheme.colors.primary,
+        color = color,
         modifier = Modifier.padding(vertical = 4.dp, horizontal = 8.dp)
     ) {
         Row(modifier = Modifier.padding(24.dp)) {
@@ -70,11 +79,13 @@ private fun Greeting(name: String) {
                 .padding(bottom = extraPadding.coerceAtLeast(0.dp))
             ) {
                 Text(text = "Hello,")
-                Text(text = "$name!")
+                Text(text = "$name", style = MaterialTheme.typography.h4.copy(
+                    fontWeight = FontWeight.ExtraBold
+                ))
             }
             OutlinedButton(
                 onClick = { expanded.value = !expanded.value },
-                modifier = Modifier.padding(top=4.dp)) {
+                modifier = Modifier.padding(top=30.dp)) {
                 Text(if(expanded.value) "Show less" else "Show more")
             }
         }
@@ -103,15 +114,21 @@ fun OnboardingScreen(onContinueClicked: () -> Unit) {
 @Preview(showBackground = true, widthDp = 320, heightDp = 320)
 @Composable
 private fun OnboardingPreview() {
-    MyApplicationTheme {
+    BasicsCodelabTheme {
         OnboardingScreen(onContinueClicked = {})
     }
 }
 
+@Preview(
+    showBackground = true,
+    widthDp = 320,
+    uiMode = UI_MODE_NIGHT_YES,
+    name = "DefaultPreviewDark"
+)
 @Preview(showBackground = true, widthDp = 320)
 @Composable
 private fun DefaultPreview() {
-    MyApplicationTheme {
+    BasicsCodelabTheme {
         Greetings()
     }
 }
